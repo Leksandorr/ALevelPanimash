@@ -8,13 +8,13 @@ public class Main {
     private static final Random random = new Random();
 
     public static void main(String[] args) {
-        Task1();
-        Task2();
-        Task3();
-        Task4();
+        task1();
+        task2();
+        task3();
+        task4();
     }
 
-    private static void Task1() {
+    private static void task1() {
         System.out.println();
         System.out.println("Task1");
         int[] numbers = new int[8];
@@ -31,7 +31,7 @@ public class Main {
         System.out.println(Arrays.toString(numbers));
     }
 
-    private static void Task2() {
+    private static void task2() {
         System.out.println();
         System.out.println("Task2");
         int[] numbers = new int[4];
@@ -60,7 +60,7 @@ public class Main {
         }
     }
 
-    private static void Task3() {
+    private static void task3() {
         System.out.println();
         System.out.println("Task3");
         int[] numbersOne = new int[5];
@@ -99,7 +99,7 @@ public class Main {
         }
     }
 
-    private static void Task4() {
+    private static void task4() {
         System.out.println();
         System.out.println("Task4");
         System.out.println("Введите натуральное число больше 3");
