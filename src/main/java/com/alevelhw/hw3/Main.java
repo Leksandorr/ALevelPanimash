@@ -1,12 +1,14 @@
 package com.alevelhw.hw3;
 
-import com.alevelhw.hw3.service.UserActionService;
+import com.alevelhw.hw3.service.UserActionServiceVar1;
+import com.alevelhw.hw3.service.UserActionServiceVar2;
 
 public class Main {
 
     public static void main(String[] args) {
         //countTickets();
-        UserActionService calculator = new UserActionService();
+        //UserActionServiceVar1 calculator = new UserActionServiceVar1();
+        UserActionServiceVar2 calculator = new UserActionServiceVar2();
         calculator.calculator();
     }
 

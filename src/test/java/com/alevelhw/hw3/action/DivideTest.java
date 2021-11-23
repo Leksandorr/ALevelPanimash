@@ -1,70 +1,74 @@
 package com.alevelhw.hw3.action;
 
+import com.alevelhw.hw3.model.Numbers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class DivideTest {
     private Divide divide;
+    private Numbers numbersMock;
 
     @Before
     public void setUp() {
         divide = new Divide();
+        numbersMock = Mockito.mock(Numbers.class);
     }
 
     @Test
     public void doAction_whenDividePositiveNumbers() {
-        divide.setNumberFirst("5");
-        divide.setNumberSecond("2");
+        Mockito.when(numbersMock.getNumberFirst()).thenReturn(5.0);
+        Mockito.when(numbersMock.getNumberSecond()).thenReturn(2.0);
         final double expected = 2.5;
-        final double actual = divide.doAction();
+        final double actual = divide.doAction(5.0, 2.0);
 
         Assert.assertEquals(expected, actual, .0000001);
     }
 
     @Test
     public void doAction_whenDivideZeroFirstNumbers() {
-        divide.setNumberFirst("0");
-        divide.setNumberSecond("2");
+        Mockito.when(numbersMock.getNumberFirst()).thenReturn(0.0);
+        Mockito.when(numbersMock.getNumberSecond()).thenReturn(2.0);
         final double expected = 0.0;
-        final double actual = divide.doAction();
+        final double actual = divide.doAction(0.0, 3.0);
 
         Assert.assertEquals(expected, actual, .0000001);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void doAction_whenDivideZeroSecondNumbers() {
-        divide.setNumberFirst("2");
-        divide.setNumberSecond("0");
-        divide.doAction();
+        Mockito.when(numbersMock.getNumberFirst()).thenReturn(3.0);
+        Mockito.when(numbersMock.getNumberSecond()).thenReturn(0.0);
+        final double actual = divide.doAction(3.0, 0.0);
     }
 
     @Test
     public void doAction_whenDivideNegativeNumbers() {
-        divide.setNumberFirst("-5");
-        divide.setNumberSecond("-2");
+        Mockito.when(numbersMock.getNumberFirst()).thenReturn(-5.0);
+        Mockito.when(numbersMock.getNumberSecond()).thenReturn(-2.0);
         final double expected = 2.5;
-        final double actual = divide.doAction();
+        final double actual = divide.doAction(-5.0, -2.0);
 
         Assert.assertEquals(expected, actual, .0000001);
     }
 
     @Test
     public void doAction_whenDividePositiveNumbersFractional() {
-        divide.setNumberFirst("5.6");
-        divide.setNumberSecond("2.5");
+        Mockito.when(numbersMock.getNumberFirst()).thenReturn(5.6);
+        Mockito.when(numbersMock.getNumberSecond()).thenReturn(2.5);
         final double expected = 2.24;
-        final double actual = divide.doAction();
+        final double actual = divide.doAction(5.6, 2.5);
 
         Assert.assertEquals(expected, actual, .0000001);
     }
 
     @Test
     public void doAction_whenDivideNegativeNumbersFractional() {
-        divide.setNumberFirst("-5.6");
-        divide.setNumberSecond("-2.5");
+        Mockito.when(numbersMock.getNumberFirst()).thenReturn(-5.6);
+        Mockito.when(numbersMock.getNumberSecond()).thenReturn(-2.5);
         final double expected = 2.24;
-        final double actual = divide.doAction();
+        final double actual = divide.doAction(-5.6, -2.5);
 
         Assert.assertEquals(expected, actual, .0000001);
     }
