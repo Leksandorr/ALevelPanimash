@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Алгоритм сортировки слиянием</title>
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="js/styles/a11y-dark.min.css">
+  <script src="js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</head>
+<body class="container">
+  <header class="container">
+  <div class="item--photo">
+  </div>
+  </header>
+  <main class="container">
+  <h2> Алгоритм сортировки слиянием </h2>
+  <div class="item--photo item--photo00">
+  </div>
+  <p> Алгоритм сортировки пузырьком имеет квадратичную вычислительную сложность – O(N^2), где N это число элементов. Это значит, что массив из 10 элементов будет отсортирован максимум за 10^2 = 100 операций. Если число элементов массива не превышает нескольких тысяч элементов, то такую сортировку можно рассматривать как вариант для использования, если же число элементов больше, необходимы более быстрые алгоритмы сортировки.  Одним из них является алгоритм сортировки слиянием.</p>
+  <p> Основная идея сортировки слиянием заключается разделении сортируемого массива на равные части, сортировки их по отдельности, а затем слияния их обратно в один массив. Если мы разделим наш массив из 10 элементов на два массива по 5, то получим максимальную сложность алгоритма О(5^2 + 5^2 + <redBlock>10</redBlock>) = 60 (<redBlock>10</redBlock> – это сложность слияния двух массивов из 5 элементов 5 + 5 = 10). Уже гораздо лучше, чем 100 операций над целым массивом. Можно пойти дальше – разбить наши массивы из 5 элементов еще пополам, точнее на 3 и 2 - O(3^2 + 2^2 + 3^2 + 2^2 + <redBlock>10 + 10</redBlock>) = 6+4+6+4+10+10 = 40 операций. (<redBlock>10+10</redBlock> – мы дважды сливаем массивы) Красота! Если сортировать массив из 100 элементов то для пузырьковой сортировки O() = 10 000, а сортировки слиянием O() = 700. Собственно, сложность алгоритма сортировки слиянием линейно-логарифмическая с порядком роста O(N·log2N) и это получше чем квадратичная сложность.</p>
+  <div class="item--photo item--photo01">
+  </div>
+  <p> Сам алгоритм реализуется при помощи рекурсии, которая (рекурсия) и разбивает на первом витке наш массив на две части, <textLineThrough>на втором витке каждый из образовавшихся подмассивов на ещё два и так до тех пока не образуются N массивов в каждом из которых содержится один элемент.</textLineThrough> Эта, перечёркнутая часть неверна, потому что последовательность выполнения алгоритма не такая, но! в конченом итоге именно в таком состоянии (состоянии массива с одним членом) побывает каждый член сортируемого массива и именно это есть «дно» рекурсии, с которого начинается слияние и непосредственно сортировка нашего «разорванного на лоскуты» массива. </p>
+  <p> Давайте отсортируем массив </p>
+  <div class="item--photo item--photo02">
+  </div>
+  <p> Делим его на две части, и продолжаем делить, пока не получим подмассивы величиной 1, которые заведомо отсортированы. </p>
+  <div class="item--photo item--photo03">
+  </div>
+  <p> Два отсортированных подмассива можно объединить с помощью простого алгоритма: удаляем меньшее из чисел в начале каждого подмассива и вставляем его в объединенный массив. </p>
+  <p> Повторяем, пока не закончатся все элементы. </p>
+  <div class="item--photo item--photo04">
+  </div>
+  <p> Массив отсортирован. </p>
+  <div>
+  <p>
+  <pre>
+  <code>
+public class Main {
+    public static int[] numbers = {19, 7, -6, 15, -2, 6, 2, 4, 8, 16};
+
+    public static void main(String[] args) {
+        System.out.println(Arrays.toString(numbers));
+        sort(0, numbers.length - 1);
+        System.out.println("Sorted " + Arrays.toString(numbers));
+    }
+
+    public static void sort(int start, int finish) {
+        System.out.println("Sort " + start + ".." + finish);
+        if (start == finish) {
+            return;
+        }
+        int mid = (start + finish) / 2;
+        sort(start, mid);   // рекурсивный вызов сортировки (а точнее разбивание) первой половины массива
+        sort(mid + 1 , finish);   // рекурсивный вызов сортировки (а точнее разбивание) второй половины массива
+        merge(start, finish);   // вызов метода в котором и происходит сравнение элементов и слияние отсортированых массивов
+    }
+
+    public static void merge(int begin, int end) {
+        int mid = (begin + end) / 2;
+        int[] temp = new int[end - begin + 1];
+        int index1 = begin;
+        int index2 = mid +1;
+        int indexT = 0;
+
+        while ((index1 <= mid) || (index2 <= end)) {
+            if (index1 > mid) {
+                temp[indexT++] = numbers[index2++];
+                continue;
+            }
+            if (index2 > end) {
+                temp[indexT++] = numbers[index1++];
+                continue;
+            }
+            if (numbers[index2] > numbers[index1]) {
+                temp[indexT++] = numbers[index1++];
+            }
+            else {
+                temp[indexT++] = numbers[index2++];
+            }
+        }
+        if (end - begin + 1 >= 0) {
+            System.arraycopy(temp,0,numbers, begin, end - begin + 1);
+        }
+        System.out.println(Arrays.toString(temp));
+    }
+}
+  </code>
+  </pre>
+  </p>
+  </div>
+  <div class="item--photo">
+  <iframe width="800" height="450" align="center"; src="https://www.youtube.com/embed/XaqR3G_NVoo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  </main>
+  <footer class="container">
+  <div>
+  </div>
+  </footer>
+</body>
+</html>

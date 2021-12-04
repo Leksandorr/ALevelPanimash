@@ -1,0 +1,74 @@
+body {
+	font-family: "PT Sans", Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	line-height: 32px;
+	text-transform: ;
+	text-align: justify;
+	}
+	
+.container {
+	max-width: 1000px;
+	margin: 0 auto;
+	}
+	
+.container {
+	background-color: #2B2B2B;
+	color: #FFFFFF;}
+
+h2 {
+	text-align: center;
+	margin: 70px auto 30px;}
+
+redBlock {
+	color: red;
+	}
+	
+grayBlock {
+	color: #DDDDDD;
+	}
+	
+textLineThrough {
+	text-decoration: line-through;
+	}
+	
+.textCode {
+	font-family: Tahoma, sans-serif;
+	font-style: italic;
+	font-size: 14px;
+	line-height: 20px;
+	text-align: left;
+	margin: 50px 50px 50px 50px;
+	color: #C29661;
+	}
+
+.item--photo {
+	width:800px;
+	margin: 50px auto 50px;
+	background-repeat: no-repeat;
+	background-size: contain;
+	}
+
+.item--photo00 {
+    background-image: url("../img/00.png");
+	height:433px;
+	}
+	
+.item--photo01 {
+    background-image: url("../img/01.png");
+	height:458px;
+	}
+	
+.item--photo02 {
+    background-image: url("../img/02.png");
+	height:103px;
+	}
+	
+.item--photo03 {
+    background-image: url("../img/03.png");
+	height:242px;
+	}
+	
+.item--photo04 {
+    background-image: url("../img/04.png");
+	height:193px;
+	}
