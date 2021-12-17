@@ -54,9 +54,9 @@ public class MyListTest {
         myListInteger.add(3);
         myListInteger.add(55);
 
-        assertEquals(Optional.of(1), Optional.of(myListInteger.getFromLast(1)));
-        assertEquals(Optional.of(2), Optional.of(myListInteger.getFromLast(2)));
-        assertEquals(Optional.of(3), Optional.of(myListInteger.getFromLast(3)));
-        assertEquals(Optional.of(55), Optional.of(myListInteger.getFromLast(55)));
+        assertEquals(Integer.valueOf(1), myListInteger.getFromLast(1));
+        assertEquals(Integer.valueOf(2), myListInteger.getFromLast(2));
+        assertEquals(Integer.valueOf(3), myListInteger.getFromLast(3));
+        assertEquals(Integer.valueOf(55), myListInteger.getFromLast(55));
     }
 }
