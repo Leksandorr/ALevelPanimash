@@ -12,62 +12,65 @@ public class BoxFromResources {
     private final MaxLiftingCapacity maxLiftingCapacity = new MaxLiftingCapacity();
     private final Cargo cargo = new Cargo();
     private final Box box = new Box(maxLiftingCapacity, cargo);
+    private Pattern pattern;
     private Matcher matcher;
+    private int indexMissingPart;
+    private String discardPart;
 
     public Box getBox(String fileName, String fileContent) {
-        int indexMissingPart;
-        String discardPart;
         Pattern pattern = Pattern.compile("\\.xml");
         matcher = pattern.matcher(fileName);
         if (matcher.find()) {
-            pattern = Pattern.compile("\".*?\"");
-            matcher = pattern.matcher(fileContent);
-            indexMissingPart = 1;
-            discardPart = "\"";
-            matcher.find();
-            String garbage = matcher.group();
-            matcher.find();
-            garbage = matcher.group();
-
-            setFromAndMateriel(indexMissingPart, discardPart);
-            setUnitMaxLiftingCapacity(indexMissingPart, discardPart);
-
-            pattern = Pattern.compile(">[^\\s]*?<");
-            matcher = pattern.matcher(fileContent);
-            discardPart = "<";
-            matcher.find();
-            garbage = matcher.group();
-
-            setColor(indexMissingPart, discardPart);
-            setValueMaxLiftingCapacity(indexMissingPart, discardPart);
-            setNameCargo(indexMissingPart, discardPart);
-            setClasCargo(indexMissingPart, discardPart);
-            setDeliveryDate(indexMissingPart, discardPart);
+            readFromXml(fileContent);
         }
         else if (Pattern.compile("\\.json").matcher(fileName).find()) {
-            pattern = Pattern.compile(": \".*?\"");
-            matcher = pattern.matcher(fileContent);
-            indexMissingPart = 3;
-            discardPart = "\"";
-
-            setFromAndMateriel(indexMissingPart, discardPart);
-            setColor(indexMissingPart, discardPart);
-            setUnitMaxLiftingCapacity(indexMissingPart, discardPart);
-            setNameCargo(indexMissingPart, discardPart);
-            setClasCargo(indexMissingPart, discardPart);
-            setDeliveryDate(indexMissingPart, discardPart);
-
-            pattern = Pattern.compile(": \\d+ ");
-            matcher = pattern.matcher(fileContent);
-            indexMissingPart = 2;
-            discardPart = " ";
-
-            setValueMaxLiftingCapacity(indexMissingPart, discardPart);
+            readFromBox(fileContent);
         }
         else {
             throw new IllegalStateException("Unsupported type file");
         }
         return box;
+    }
+
+    private void readFromXml(String fileContent) {
+        pattern = Pattern.compile("\".*?\"");
+        matcher = pattern.matcher(fileContent);
+        indexMissingPart = 1;
+        discardPart = "\"";
+
+        setFromAndMateriel(indexMissingPart, discardPart);
+        setUnitMaxLiftingCapacity(indexMissingPart, discardPart);
+
+        pattern = Pattern.compile(">[^\\s]*?<");
+        matcher = pattern.matcher(fileContent);
+        discardPart = "<";
+
+        setColor(indexMissingPart, discardPart);
+        setValueMaxLiftingCapacity(indexMissingPart, discardPart);
+        setNameCargo(indexMissingPart, discardPart);
+        setClasCargo(indexMissingPart, discardPart);
+        setDeliveryDate(indexMissingPart, discardPart);
+    }
+
+    private void readFromBox(String fileContent) {
+        pattern = Pattern.compile(": \".*?\"");
+        matcher = pattern.matcher(fileContent);
+        indexMissingPart = 3;
+        discardPart = "\"";
+
+        setFromAndMateriel(indexMissingPart, discardPart);
+        setColor(indexMissingPart, discardPart);
+        setUnitMaxLiftingCapacity(indexMissingPart, discardPart);
+        setNameCargo(indexMissingPart, discardPart);
+        setClasCargo(indexMissingPart, discardPart);
+        setDeliveryDate(indexMissingPart, discardPart);
+
+        pattern = Pattern.compile(": \\d+ ");
+        matcher = pattern.matcher(fileContent);
+        indexMissingPart = 2;
+        discardPart = " ";
+
+        setValueMaxLiftingCapacity(indexMissingPart, discardPart);
     }
 
     private String getValueOfField(int indexMissingPart, String discardPart) {
