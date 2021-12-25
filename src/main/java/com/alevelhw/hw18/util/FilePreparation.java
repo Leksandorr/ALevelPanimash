@@ -13,6 +13,7 @@ public class FilePreparation {
         String line;
         if (inputStream != null) {
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))){
+                bufferedReader.readLine();
                 while ((line = bufferedReader.readLine()) != null) {
                     builder.append(line);
                 }
