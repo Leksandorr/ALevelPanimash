@@ -1,0 +1,12 @@
+type,series,model,diagonal,screen type,country,price
+Telephone,M-100,Redmi,none,OLED,none,600
+Telephone,D-4,Apple,none,ILEDs,none,500
+Telephone,F-17,Xiaomi,none,XLED,none,400
+Telephone,MMM-2000,Nokia,none,LED,none,300
+Telephone,S-10,Samsung,none,QLED,none,200
+Television,VTV-8,none,85,SLED,China,1500
+Television,BTU-265,none,65,OLED,China,1800
+Television,UTI-155,none,55,GLED,China,1900
+Television,NTG-145,none,45,ULED,China,2200
+Television,RTI-14,none,25,LED,China,2500
+Television,RTI-14,none,21,LED,,500
