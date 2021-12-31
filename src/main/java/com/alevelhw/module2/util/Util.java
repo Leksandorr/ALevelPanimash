@@ -8,4 +8,8 @@ public class Util {
     public static int getRandomInt(int minBound, int maxBound) {
         return random.nextInt(maxBound - minBound + 1) + minBound;
     }
+
+    public static boolean isBlankString(String string) {
+        return string == null || string.trim().isEmpty();
+    }
 }

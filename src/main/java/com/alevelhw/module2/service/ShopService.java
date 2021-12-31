@@ -2,36 +2,44 @@ package com.alevelhw.module2.service;
 
 import com.alevelhw.module2.exception.IncorrectReadStringException;
 import com.alevelhw.module2.model.Invoice;
+import com.alevelhw.module2.model.Product;
 import com.alevelhw.module2.model.Telephone;
 import com.alevelhw.module2.model.Television;
 import com.alevelhw.module2.util.Util;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import static com.alevelhw.module2.util.Util.isBlankString;
 
 public class ShopService {
-    private final Map<String, Invoice> invoiceMap = new LinkedHashMap<>();
+    private final Map<LocalDateTime, Invoice> invoiceMap = new LinkedHashMap<>();
     private final List<String> productsList = new ArrayList<>();
+    private final List<String> patternList = new ArrayList<>();
     private final PersonService personService = new PersonService();
+    private String patternString;
     private int limitRetail;
 
-    public Map<String, Invoice> getInvoiceMap() {
+    public Map<LocalDateTime, Invoice> getInvoiceMap() {
         return invoiceMap;
     }
 
-    public void startShopService(String targetDirectory, int numberOfPurchase) {
+    public void startShopService(String targetLogFile, int numberOfPurchase) {
         limitRetail = Util.getRandomInt(2500, 3000);
         fillListOfProductsFromFile();
+        StringTokenizer tokenizer = new StringTokenizer(patternString, ",");
+        while (tokenizer.hasMoreTokens()) {
+            patternList.add(tokenizer.nextToken());
+        }
         for (int i = 0; i < numberOfPurchase; i++) {
             Invoice invoice = getRandomInvoice();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm:ss:SSS");
-            String dateTime = LocalDateTime.now().format(formatter);
+            LocalDateTime dateTime = LocalDateTime.now();
             invoiceMap.put(dateTime, invoice);
-            writeInvoiceToLogFile(invoice, targetDirectory, dateTime);
+            writeInvoiceToLogFile(invoice, targetLogFile, dateTime);
         }
     }
 
@@ -41,7 +49,7 @@ public class ShopService {
         String line;
         if (inputStream != null) {
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
-                bufferedReader.readLine();
+                patternString = bufferedReader.readLine();
                 while ((line = bufferedReader.readLine()) != null) {
                     productsList.add(line);
                 }
@@ -57,17 +65,22 @@ public class ShopService {
         int maxQuantityProductsInInvoice = 5;
         int quantityProductsInInvoice = Util.getRandomInt(minQuantityProductsInInvoice, maxQuantityProductsInInvoice);
         for (int i = 0; i < quantityProductsInInvoice; i++) {
-            int randomProduct = Util.getRandomInt(0, productsList.size() - 1);
-            String[] product = productsList.get(randomProduct).split(",");
-            if (product[0].equals("Telephone")) {
+            int randomProductIndex = Util.getRandomInt(0, productsList.size() - 1);
+            String randomProduct = productsList.get(randomProductIndex);
+            String[] productArray = randomProduct.split(",");
+            List<String> product = Arrays.asList(productArray);
+            Map<String, String> productMap = IntStream.range(0, patternList.size())
+                    .boxed()
+                    .collect(Collectors.toMap(patternList::get, product::get));
+            if (productMap.get("type").equals("Telephone")) {
                 try {
-                    invoice.getTelephonesSet().add(getTelephone(product));
+                    invoice.getProductSet().add(getTelephone(productMap));
                 } catch (IncorrectReadStringException e) {
                     System.out.println("Ошибка. Товар не добавлен в инвойс: " + e);
                 }
-            } else if (product[0].equals("Television")) {
+            } else if (productMap.get("type").equals("Television")) {
                 try {
-                    invoice.getTelevisionsSet().add(getTelevision(product));
+                    invoice.getProductSet().add(getTelevision(productMap));
                 } catch (IncorrectReadStringException e) {
                     System.out.println("Ошибка. Товар не добавлен в инвойс: " + e);
                 }
@@ -78,88 +91,64 @@ public class ShopService {
         invoice.setCustomer(personService.getNewCustomer());
         if (getTotalPriceInvoice(invoice) <= limitRetail) {
             invoice.setType("retail");
-        }
-        else {
+        } else {
             invoice.setType("wholesale");
         }
         return invoice;
     }
 
     public int getTotalPriceInvoice(Invoice invoice) {
-        int totalPriceTelephone = (int) invoice.getTelephonesSet()
+        return invoice.getProductSet()
                 .stream()
-                .map(Telephone::getPrice)
+                .map(Product::getPrice)
                 .mapToInt(i -> i)
-                .summaryStatistics().getSum();
-        int totalPriceTelevision = (int) invoice.getTelevisionsSet()
-                .stream()
-                .map(Television::getPrice)
-                .mapToInt(i -> i)
-                .summaryStatistics().getSum();
-        return totalPriceTelephone + totalPriceTelevision;
+                .sum();
     }
 
-    private Telephone getTelephone(String[] product) throws IncorrectReadStringException {
-        Telephone telephone = new Telephone();
-        String series = product[1];
-        String model = product[2];
-        String screenType = product[4];
-        String price = product[6];
-        if (series.equals("") || series.equals(" ")
-                || model.equals("") || model.equals(" ")
-                || screenType.equals("") || screenType.equals(" ")
-                || price.equals("") || price.equals(" ")) {
+    private Telephone getTelephone(Map<String, String> productMap) throws IncorrectReadStringException {
+        String series = productMap.get("series");
+        String model = productMap.get("model");
+        String screenType = productMap.get("screen type");
+        String priceString = productMap.get("price");
+        Telephone telephone;
+        if (isBlankString(series) || isBlankString(model)
+                || isBlankString(screenType) || isBlankString(priceString)) {
             throw new IncorrectReadStringException(series);
         } else {
-            telephone.setSeries(series);
+            int price = Integer.parseInt(priceString);
+            telephone = new Telephone(series, screenType, price);
             telephone.setModel(model);
-            telephone.setScreenType(screenType);
-            telephone.setPrice(Integer.parseInt(price));
         }
         return telephone;
     }
 
-    private Television getTelevision(String[] product) throws IncorrectReadStringException {
-        Television television = new Television();
-        String series = product[1];
-        String diagonal = product[3];
-        String screenType = product[4];
-        String country = product[5];
-        String price = product[6];
-        if (series.equals("") || series.equals(" ")
-                || diagonal.equals("") || diagonal.equals(" ")
-                || screenType.equals("") || screenType.equals(" ")
-                || country.equals("") || country.equals(" ")
-                || price.equals("") || price.equals(" ")) {
+    private Television getTelevision(Map<String, String> productMap) throws IncorrectReadStringException {
+        String series = productMap.get("series");
+        String diagonal = productMap.get("diagonal");
+        String screenType = productMap.get("screen type");
+        String country = productMap.get("country");
+        String priceString = productMap.get("price");
+        Television television;
+        if (isBlankString(series) || isBlankString(diagonal) || isBlankString(screenType)
+                || isBlankString(country) || isBlankString(priceString)) {
             throw new IncorrectReadStringException(series);
         } else {
-            television.setSeries(series);
+            int price = Integer.parseInt(priceString);
+            television = new Television(series, screenType, price);
             television.setDiagonal(Integer.parseInt(diagonal));
-            television.setScreenType(screenType);
             television.setCountry(country);
-            television.setPrice(Integer.parseInt(price));
         }
         return television;
     }
 
-    private void writeInvoiceToLogFile(Invoice invoice, String targetDirectory, String dateTime) {
-        String logFlePath = targetDirectory +
-                "Invoice " +
-                " [CustomerID " +
-                invoice.getCustomer().getId() +
-                "]" +
-                ".log";
-        try (PrintWriter writer = new PrintWriter((logFlePath), StandardCharsets.UTF_8)) {
-            writer.printf("[%s]", dateTime);
-            writer.printf("[%s]", invoice.getCustomer());
-            if (invoice.getTelephonesSet().size() != 0) {
-                invoice.getTelephonesSet()
-                        .forEach(x -> writer.printf("[%s]", x));
-            }
-            if (invoice.getTelevisionsSet().size() != 0) {
-                invoice.getTelevisionsSet()
-                        .forEach(x -> writer.printf("[%s]", x));
-            }
+    private void writeInvoiceToLogFile(Invoice invoice, String targetLogFile, LocalDateTime dateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm:ss:SSS");
+        try (FileWriter fileWriter = new FileWriter(targetLogFile, true);
+             PrintWriter writer = new PrintWriter(fileWriter)) {
+                writer.printf("[%s]", dateTime.format(formatter));
+                writer.printf("[%s]", invoice.getCustomer());
+                invoice.getProductSet().forEach(x -> writer.printf("[%s]", x));
+                writer.print("\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
