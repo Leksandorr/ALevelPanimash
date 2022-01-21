@@ -60,7 +60,7 @@ public class ActionRepository extends AbstractRepository {
         return null;
     }
 
-    public void ChangeDevise(Device device) {
+    public void changeDevise(Device device) {
         long id = device.getId();
         String selectDeviseByIdSQL = "SELECT * FROM stock.public.devices WHERE device_id = ?";
         try (Connection connection = createConnection();
@@ -87,7 +87,7 @@ public class ActionRepository extends AbstractRepository {
         }
     }
 
-    public void DeleteDevice(Device device) {
+    public void deleteDevice(Device device) {
         long id = device.getId();
         String deleteDeviseByIdSQL = "SELECT * FROM stock.public.devices WHERE device_id = ?";
         try (Connection connection = createConnection();

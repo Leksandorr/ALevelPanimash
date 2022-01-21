@@ -22,11 +22,11 @@ public class Main {
 
         System.out.println("Изменяем устройстово");
         device.setDescription("Изменённое устройство");
-        actionRepository.ChangeDevise(device);
+        actionRepository.changeDevise(device);
         System.out.println(actionRepository.getDeviceById(1));
 
         System.out.println("Удаляем устройстово");
-        actionRepository.DeleteDevice(device);
+        actionRepository.deleteDevice(device);
         System.out.println(actionRepository.getDeviceById(1));
 
         System.out.println("Завод по ID");
