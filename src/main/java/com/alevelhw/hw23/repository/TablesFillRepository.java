@@ -64,24 +64,24 @@ public class TablesFillRepository extends AbstractRepository {
         }
     }
 
-    private String getRandomFactoryName() {
+    public String getRandomFactoryName() {
         return factoryNamesList.get(Util.getRandomInt(0, factoryNamesList.size() - 1));
     }
 
-    private String getRandomCountry() {
+    public String getRandomCountry() {
         return countriesList.get(Util.getRandomInt(0, countriesList.size() - 1));
     }
 
-    private String getRandomDeviceType() {
+    public String getRandomDeviceType() {
         return devicesList.get(Util.getRandomInt(0, devicesList.size() - 1));
     }
 
-    private String getRandomModel() {
+    public String getRandomModel() {
         return UtilHW23.getRandomLatinString(1, 3).toUpperCase() + "-" +
                 Util.getRandomInt(1, 99);
     }
 
-    private Date getRandomDate() throws ParseException {
+    public Date getRandomDate() throws ParseException {
         String dateString = Util.getRandomInt(2017, 2021) +
                 "-" +
                 Util.getRandomInt(1, 12) +
@@ -92,11 +92,11 @@ public class TablesFillRepository extends AbstractRepository {
         return new Date(date.getTime());
     }
 
-    private boolean getRandomBoolean() {
+    public boolean getRandomBoolean() {
         return Util.getRandomInt(0, 1) == 1;
     }
 
-    private int getRandomFactoryId() {
+    public int getRandomFactoryId() {
         int quantityFactories = 0;
         String quantityFactoriesSQL = "SELECT COUNT(factory_id) FROM stock.public.factories";
         try (Connection connection = createConnection();
