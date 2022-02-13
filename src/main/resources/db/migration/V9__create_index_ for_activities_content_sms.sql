@@ -1,0 +1,1 @@
+CREATE INDEX activities_idx ON activities USING GIN (to_tsvector('english', content_sms));
