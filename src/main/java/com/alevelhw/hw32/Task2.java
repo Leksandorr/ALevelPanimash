@@ -65,7 +65,7 @@ public class Task2 {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            } while (distance >= 1000);
+            } while (distance < 1000);
             watch.stop();
 
             time = watch.getNanoTime();
